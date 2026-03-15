@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SamsukaProxy — ускорение Telegram Desktop</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: #0a0f1e;
+            color: #fff;
+            line-height: 1.6;
+        }
+
+        /* Градиентный фон */
+        .gradient-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 10% 20%, rgba(0, 100, 255, 0.15) 0%, transparent 40%),
+                        radial-gradient(circle at 90% 80%, rgba(0, 200, 255, 0.15) 0%, transparent 40%),
+                        #0a0f1e;
+            z-index: -1;
+        }
+
+        /* Навигация */
+        .nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            font-size: 1.2rem;
+        }
+
+        .nav-logo img {
+            width: 32px;
+            height: 32px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-links a {
+            color: #8b95a9;
+            text-decoration: none;
+            transition: color 0.2s;
+            font-size: 0.95rem;
+        }
+
+        .nav-links a:hover {
+            color: #fff;
+        }
+
+        /* Контейнер */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px;
+        }
+
+        /* Hero секция */
+        .hero {
+            text-align: center;
+            margin: 60px 0 40px;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #fff, #94b9ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: #8b95a9;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Кнопка */
+        .button {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: #fff;
+            color: #0a0f1e;
+            padding: 16px 36px;
+            border-radius: 100px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            text-decoration: none;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin: 40px 0;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 30px rgba(0, 100, 255, 0.2);
+        }
+
+        .button svg {
+            width: 20px;
+            height: 20px;
+            fill: #0a0f1e;
+        }
+
+        /* Сетка фич */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin: 80px 0;
+        }
+
+        .feature {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 30px;
+            transition: border-color 0.2s;
+        }
+
+        .feature:hover {
+            border-color: rgba(0, 150, 255, 0.3);
+        }
+
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+
+        .feature h3 {
+            font-size: 1.2rem;
+            margin-bottom: 12px;
+            color: #fff;
+        }
+
+        .feature p {
+            color: #8b95a9;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        /* Как это работает */
+        .how-it-works {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 30px;
+            padding: 50px;
+            margin: 80px 0;
+        }
+
+        .how-it-works h2 {
+            font-size: 2rem;
+            margin-bottom: 30px;
+        }
+
+        .flow {
+            background: #0f1424;
+            border-radius: 16px;
+            padding: 20px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.9rem;
+            color: #64b5f6;
+            margin-bottom: 30px;
+            border: 1px solid #1f2a40;
+            word-break: break-word;
+        }
+
+        .steps {
+            list-style: none;
+        }
+
+        .steps li {
+            margin: 15px 0;
+            padding-left: 30px;
+            position: relative;
+            color: #b0c0d0;
+        }
+
+        .steps li::before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: #3b82f6;
+        }
+
+        /* Блок антивируса */
+        .warning {
+            background: rgba(255, 180, 0, 0.03);
+            border: 1px solid rgba(255, 180, 0, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 40px 0;
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+
+        .warning-icon {
+            font-size: 2rem;
+            background: rgba(255, 180, 0, 0.1);
+            padding: 15px;
+            border-radius: 100%;
+            line-height: 1;
+        }
+
+        .warning-content {
+            flex: 1;
+        }
+
+        .warning-content h3 {
+            color: #ffb800;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+
+        .warning-content p {
+            color: #b0b8c5;
+        }
+
+        .warning-solutions {
+            margin-top: 15px;
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .solution-tag {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 8px 16px;
+            border-radius: 100px;
+            font-size: 0.9rem;
+            color: #e0e7ff;
+        }
+
+        /* Дисклеймер */
+        .disclaimer {
+            background: #0f1424;
+            border-radius: 16px;
+            padding: 30px;
+            font-size: 0.9rem;
+            color: #6c7a96;
+            margin: 40px 0;
+            font-family: 'Monaco', 'Menlo', monospace;
+            border: 1px solid #1f2a40;
+        }
+
+        .disclaimer a {
+            color: #60a5fa;
+            text-decoration: none;
+        }
+
+        .disclaimer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Футер */
+        .footer {
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 40px;
+            margin-top: 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #5d6b84;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 30px;
+        }
+
+        .footer-links a {
+            color: #8b95a9;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .footer-links a:hover {
+            color: #fff;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 800px) {
+            .features {
+                grid-template-columns: 1fr;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .container {
+                padding: 20px;
+            }
+
+            .how-it-works {
+                padding: 30px;
+            }
+
+            .nav {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .warning {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="gradient-bg"></div>
+
+    <!-- Навигация -->
+    <div class="nav">
+        <div class="nav-logo">
+            <img src="logo.png" alt="SamsukaProxy">
+            <span>SamsukaProxy</span>
+        </div>
+        <div class="nav-links">
+            <a href="https://github.com/vizi1337/SamsukaProxy">GitHub</a>
+            <a href="https://github.com/Flowseal/tg-ws-proxy/">Original</a>
+            <a href="https://github.com/vizi1337/SamsukaProxy/releases">Releases</a>
+        </div>
+    </div>
+
+    <!-- Основной контент -->
+    <div class="container">
+        <!-- Hero -->
+        <div class="hero">
+            <h1>SamsukaProxy</h1>
+            <p>Локальный SOCKS5-прокси для ускорения Telegram Desktop через WebSocket</p>
+
+            <!-- Кнопка -->
+            <a href="https://github.com/vizi1337/SamsukaProxy/releases" class="button">
+                <svg viewBox="0 0 24 24">
+                    <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+                </svg>
+                Download
+                <svg viewBox="0 0 24 24">
+                    <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+                </svg>
+            </a>
+        </div>
+
+        <!-- Features -->
+        <div class="features">
+            <div class="feature">
+                <div class="feature-icon">⚡</div>
+                <h3>Ускорение</h3>
+                <p>Быстрая загрузка файлов, сообщений и медиа через WebSocket</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">🔒</div>
+                <h3>Локальный</h3>
+                <p>Работает на 127.0.0.1:1080, полный контроль над трафиком</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">🔄</div>
+                <h3>Авто-fallback</h3>
+                <p>При недоступности WS переключается на прямое TCP</p>
+            </div>
+        </div>
+
+        <!-- How it works -->
+        <div class="how-it-works">
+            <h2>Как это работает</h2>
+            <div class="flow">
+                Telegram → SOCKS5 (127.0.0.1:1080) → SamsukaProxy → WSS (kws*.web.telegram.org) → Telegram DC
+            </div>
+            <ul class="steps">
+                <li>Поднимает локальный SOCKS5 на 127.0.0.1:1080</li>
+                <li>Перехватывает подключения к IP Telegram</li>
+                <li>Извлекает DC ID из MTProto пакета</li>
+                <li>Устанавливает WebSocket (TLS) соединение</li>
+                <li>Авто-переключение на TCP при недоступности WS</li>
+            </ul>
+        </div>
+
+        <!-- Антивирус предупреждение -->
+        <div class="warning">
+            <div class="warning-icon">🛡️</div>
+            <div class="warning-content">
+                <h3>Реакция антивирусов</h3>
+                <p>Windows Defender может ошибочно распознать программу как вирус. Это связано с особенностями работы с сетью (перехват трафика) и упаковкой бинарника.</p>
+                <div class="warning-solutions">
+                    <span class="solution-tag">✓ Отключите антивирус на время установки</span>
+                    <span class="solution-tag">✓ Добавьте в исключения</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Дисклеймер -->
+        <div class="disclaimer">
+            <p>Репозиторий оригинальной программы: <a href="https://github.com/Flowseal/tg-ws-proxy/">https://github.com/Flowseal/tg-ws-proxy/</a></p>
+            <p style="margin-top: 10px;">Я не выдаю свою модификацию за отдельное приложение. Вы можете модифицировать мой код как вам угодно.</p>
+        </div>
+
+        <!-- Футер -->
+        <div class="footer">
+            <div>© 2024 SamsukaProxy</div>
+            <div class="footer-links">
+                <a href="https://github.com/vizi1337">GitHub</a>
+                <a href="https://github.com/vizi1337/SamsukaProxy">Repository</a>
+                <a href="https://github.com/Flowseal/tg-ws-proxy/">Original</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
